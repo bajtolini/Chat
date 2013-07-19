@@ -1,13 +1,16 @@
 package server;
 
-import java.io.*;
-import java.net.*;
+import java.io.DataInputStream;
+import java.io.EOFException;
+import java.io.IOException;
+import java.net.Socket;
 
 public class ServerThread extends Thread {
 // The Server that spawned us
     private Server server;
 // The Socket connected to our client
     private Socket socket;
+    
 // Constructor.
     public ServerThread(Server server, Socket socket) {
 // Save the parameters
@@ -16,12 +19,11 @@ public class ServerThread extends Thread {
 // Start up the thread
         start();
     }
-// This runs in a separate thread when start() is called in the
-// constructor.
+    
+// This runs in a separate thread when start() is called in the constructor.
     public void run() {
         try {
-// Create a DataInputStream for communication; the client
-// is using a DataOutputStream to write to us
+// Create a DataInputStream for communication; the client is using a DataOutputStream to write to us
             DataInputStream din = new DataInputStream(socket.getInputStream());
 // Over and over, forever ...
             while (true) {
@@ -38,8 +40,7 @@ public class ServerThread extends Thread {
 // This does; tell the world!
             ie.printStackTrace();
         } finally {
-// The connection is closed for one reason or another,
-// so have the server dealing with it
+// The connection is closed for one reason or another, so have the server dealing with it
             server.removeConnection(socket);
         }
     }

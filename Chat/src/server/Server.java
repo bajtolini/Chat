@@ -1,20 +1,21 @@
 package server;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
 public class Server {
-    
+
 // The ServerSocket we'll use for accepting new connections
     private ServerSocket ss;
-    
-// A mapping from sockets to DataOutputStreams. This will
-// help us avoid having to create a DataOutputStream each time
-// we want to write to a stream.
+// A mapping from sockets to DataOutputStreams. This will help us avoid having to 
+// create a DataOutputStream each time we want to write to a stream.
     private Hashtable outputStreams = new Hashtable();
-// Constructor and while-accept loop all in one.
 
+// Constructor and while-accept loop all in one.
     public Server(int port) throws IOException {
 // All we have to do is listen
         listen(port);
@@ -31,28 +32,24 @@ public class Server {
             Socket s = ss.accept();
 // Tell the world we've got it
             System.out.println("Connection from " + s);
-// Create a DataOutputStream for writing data to the
-// other side
+// Create a DataOutputStream for writing data to the other side
             DataOutputStream dout = new DataOutputStream(s.getOutputStream());
 // Save this stream so we don't need to make it again
             outputStreams.put(s, dout);
-// Create a new thread for this connection, and then forget
-// about it
+// Create a new thread for this connection, and then forget about it
             new ServerThread(this, s);
         }
     }
-// Get an enumeration of all the OutputStreams, one for each client
-// connected to us
 
+// Get an enumeration of all the OutputStreams, one for each client connected to us
     Enumeration getOutputStreams() {
         return outputStreams.elements();
     }
-// Send a message to all clients (utility routine)
 
+// Send a message to all clients (utility routine)
     void sendToAll(String message) {
-// We synchronize on this because another thread might be
-// calling removeConnection() and this would screw us up
-// as we tried to walk through the list
+// We synchronize on this because another thread might be calling removeConnection()
+// and this would screw us up as we tried to walk through the list
         synchronized (outputStreams) {
 // For each client ...
             for (Enumeration e = getOutputStreams(); e.hasMoreElements();) {
@@ -67,13 +64,12 @@ public class Server {
             }
         }
     }
-// Remove a socket, and it's corresponding output stream, from our
-// list. This is usually called by a connection thread that has
+    
+// Remove a socket, and it's corresponding output stream, from our list.
+// This is usually called by a connection thread that has
 // discovered that the connectin to the client is dead.
-
     void removeConnection(Socket s) {
-// Synchronize so we don't mess up sendToAll() while it walks
-// down the list of all output streamsa
+// Synchronize so we don't mess up sendToAll() while it walks down the list of all output streams
         synchronized (outputStreams) {
 // Tell the world
             System.out.println("Removing connection to " + s);
@@ -88,14 +84,12 @@ public class Server {
             }
         }
     }
-// Main routine
-// Usage: java Server <port>
-
+     
+// Main routine Usage: java Server <port>
     static public void main(String args[]) throws Exception {
-// Get the port # from the command line
-        int port = Integer.parseInt(args[0]);
-// Create a Server object, which will automatically begin
-// accepting connections.
+// Get the port
+        int port = 1666;
+// Create a Server object, which will automatically begin accepting connections.
         new Server(port);
     }
 }

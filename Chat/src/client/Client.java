@@ -1,30 +1,31 @@
 package client;
 
-import java.applet.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.net.*;
+import java.awt.BorderLayout;
+import java.awt.Panel;
+import java.awt.TextArea;
+import java.awt.TextField;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Socket;
+
+//usunac applet z poczatku (moze byc wiecej do poprawy)
+//nalezy zastapic wpisywanie do appletu na wyswietlanie tekstu uzytkownikom (chyba juz jest cos takiego)
+//dodac wyjatek: osoba ktora juz to napisala
 
 public class Client extends Panel implements Runnable {
-// Components for the visual display of the chat windows
-    private TextField tf = new TextField();
-    private TextArea ta = new TextArea();
 // The socket connecting us to the server
     private Socket socket;
-// The streams we communicate to the server; these come
-// from the socket
+// The streams we communicate to the server; these come from the socket
     private DataOutputStream dout;
     private DataInputStream din;
+    
 // Constructor
     public Client(String host, int port) {
-// Set up the screen
-        setLayout(new BorderLayout());
-        add("North", tf);
-        add("Center", ta);
-// We want to receive messages when someone types a line
-// and hits return, using an anonymous class as
-// a callback
+// We want to receive messages when someone types a line and hits return,
+// using an anonymous class as a callback
         tf.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 processMessage(e.getActionCommand());
@@ -36,8 +37,7 @@ public class Client extends Panel implements Runnable {
             socket = new Socket(host, port);
 // We got a connection! Tell the world
             System.out.println("connected to " + socket);
-// Let's grab the streams and create DataInput/Output streams
-// from them
+// Let's grab the streams and create DataInput/Output streams from them
             din = new DataInputStream(socket.getInputStream());
             dout = new DataOutputStream(socket.getOutputStream());
 // Start a background thread for receiving messages
@@ -46,6 +46,7 @@ public class Client extends Panel implements Runnable {
             System.out.println(ie);
         }
     }
+    
 // Gets called when the user types something
     private void processMessage(String message) {
         try {
@@ -57,6 +58,7 @@ public class Client extends Panel implements Runnable {
             System.out.println(ie);
         }
     }
+    
 // Background thread runs this: show messages from other window
     public void run() {
         try {
