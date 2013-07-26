@@ -5,3 +5,5 @@ manifest.mf
 /Chat/build/
 /Trial/nbproject/private/
 /Trial/build/
+/Client/nbproject/private/
+/Chat/dist/

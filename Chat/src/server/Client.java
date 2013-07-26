@@ -1,15 +1,11 @@
-package client;
+package server;
 
-import java.awt.BorderLayout;
 import java.awt.Panel;
-import java.awt.TextArea;
-import java.awt.TextField;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Scanner;
 
 //usunac applet z poczatku (moze byc wiecej do poprawy)
 //nalezy zastapic wpisywanie do appletu na wyswietlanie tekstu uzytkownikom (chyba juz jest cos takiego)
@@ -22,15 +18,15 @@ public class Client extends Panel implements Runnable {
     private DataOutputStream dout;
     private DataInputStream din;
     
+    String actuallmessage[];
+    
 // Constructor
     public Client(String host, int port) {
 // We want to receive messages when someone types a line and hits return,
 // using an anonymous class as a callback
-        tf.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                processMessage(e.getActionCommand());
-            }
-        });
+        Scanner scanner = new Scanner(System.in);
+        String message = scanner.nextLine();
+        processMessage(message);
 // Connect to the server
         try {
 // Initiate the connection
@@ -52,8 +48,6 @@ public class Client extends Panel implements Runnable {
         try {
 // Send it to the server
             dout.writeUTF(message);
-// Clear out text input field
-            tf.setText("");
         } catch (IOException ie) {
             System.out.println(ie);
         }
@@ -67,7 +61,7 @@ public class Client extends Panel implements Runnable {
 // Get the next message
                 String message = din.readUTF();
 // Print it to our text window
-                ta.append(message + "\n");
+                System.out.println(message);
             }
         } catch (IOException ie) {
             System.out.println(ie);
